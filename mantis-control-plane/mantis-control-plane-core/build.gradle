@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java-test-fixtures'
 
 ext {
@@ -28,12 +28,12 @@ ext {
     testngVersion = '6.14.+'
 }
 
-configurations {
-    // Configuration for shading that does not pollutes the runtime classpath.
-    shaded {
-        transitive = true
-    }
-}
+//configurations {
+//    // Configuration for shading that does not pollutes the runtime classpath.
+//    shaded {
+//        transitive = false
+//    }
+//}
 
 dependencies {
 
@@ -55,21 +55,21 @@ dependencies {
     testImplementation libraries.mockitoAll
 }
 
-shadowJar {
-    include '*flink-rpc-akka*.jar'
-    classifier = null
-    configurations = [project.configurations.shaded]
-    mergeServiceFiles()
-    from sourceSets.main.allSource
-}
+//shadowJar {
+//    include '*flink-rpc-akka*.jar'
+//    classifier = null
+//    configurations = [project.configurations.shaded]
+//    mergeServiceFiles()
+//    from sourceSets.main.allSource
+//}
 
 task copyLibs(type: Copy) {
     from(sourceSets.main.runtimeClasspath) {
         rename 'flink-rpc-akka(.*)', 'flink-rpc-akka.jar'
     }
     include '*flink-rpc-akka*.jar'
-    into "$buildDir/classes"
+    into "$buildDir/classes/java/main"
 }
 
-copyLibs.dependsOn shadowJar
+//copyLibs.dependsOn shadowJar
 jar.dependsOn copyLibs
