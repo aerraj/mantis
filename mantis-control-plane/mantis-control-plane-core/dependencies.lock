@@ -476,9 +476,6 @@
             ],
             "locked": "1.14.2"
         },
-        "org.apache.flink:flink-rpc-akka": {
-            "locked": "1.14.2"
-        },
         "org.apache.flink:flink-rpc-core": {
             "firstLevelTransitive": [
                 "io.mantisrx:mantis-control-plane-core"

@@ -33,8 +33,6 @@ configurations {
     shaded {
         transitive = false
     }
-    shadow
-    testImplementation.extendsFrom shadow
 //    api.extendsFrom shadow
 }
 
