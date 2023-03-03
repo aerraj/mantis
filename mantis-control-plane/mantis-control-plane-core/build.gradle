@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java-test-fixtures'
 
 ext {
@@ -28,21 +28,22 @@ ext {
     testngVersion = '6.14.+'
 }
 
-//configurations {
-//    // Configuration for shading that does not pollutes the runtime classpath.
-//    shaded {
-//        transitive = false
-//    }
-//}
+configurations {
+    // Configuration for shading that does not pollutes the runtime classpath.
+    shaded {
+        transitive = false
+    }
+}
 
 dependencies {
 
     api project(":mantis-common")
 
     api "org.skife.config:config-magic:$configMagicVersion"
-    api libraries.flinkRpcApi
-    api libraries.flinkCore
-    api libraries.flinkRpcImpl
+    api 'com.google.code.findbugs:jsr305:3.0.1' // For Nonnull annotation
+    shaded libraries.flinkRpcApi
+    shaded libraries.flinkCore
+    shaded libraries.flinkRpcImpl
 
     api "org.apache.mesos:mesos:$mesosVersion"
     api "org.json:json:$jsonVersion"
@@ -55,13 +56,12 @@ dependencies {
     testImplementation libraries.mockitoAll
 }
 
-//shadowJar {
+shadowJar {
 //    include '*flink-rpc-akka*.jar'
-//    classifier = null
-//    configurations = [project.configurations.shaded]
-//    mergeServiceFiles()
-//    from sourceSets.main.allSource
-//}
+    classifier = null
+    configurations = [project.configurations.shaded]
+    mergeServiceFiles()
+}
 
 task copyLibs(type: Copy) {
     from(sourceSets.main.runtimeClasspath) {
@@ -71,5 +71,5 @@ task copyLibs(type: Copy) {
     into "$buildDir/classes/java/main"
 }
 
-//copyLibs.dependsOn shadowJar
+copyLibs.dependsOn shadowJar
 jar.dependsOn copyLibs
