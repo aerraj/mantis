@@ -22,12 +22,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ServiceLoader;
 import java.util.UUID;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.classloading.SubmoduleClassLoader;
 import org.apache.flink.runtime.rpc.RpcSystem;
 import org.apache.flink.runtime.rpc.RpcSystemLoader;
-import org.apache.flink.runtime.rpc.akka.AkkaRpcSystem;
 import org.apache.flink.util.IOUtils;
 
 /**
@@ -72,7 +72,7 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
                     new URL[] {tempFile.toUri().toURL()}, flinkClassLoader);
 
             return new CleanupOnCloseRpcSystem(
-                new AkkaRpcSystem(),
+                ServiceLoader.load(RpcSystem.class, submoduleClassLoader).iterator().next(),
                 submoduleClassLoader,
                 tempFile);
         } catch (IOException e) {
