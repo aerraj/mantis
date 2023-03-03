@@ -33,6 +33,9 @@ configurations {
     shaded {
         transitive = false
     }
+    shadow
+    testImplementation.extendsFrom shadow
+//    api.extendsFrom shadow
 }
 
 dependencies {
@@ -51,7 +54,7 @@ dependencies {
     api "com.github.spullara.cli-parser:cli-parser:$cliParserVersion"
     api "joda-time:joda-time:$jodaTimeVersion"
 
-
+    testFixturesImplementation "org.apache.flink:flink-rpc-akka:1.14.2"
     testImplementation libraries.junit4
     testImplementation libraries.mockitoAll
 }
@@ -67,6 +70,13 @@ shadowJar {
 
     mergeServiceFiles()
 }
+
+//shadowJar {
+////    project.configurations.testImplementation.canBeResolved = true
+//    archiveClassifier.set("tests")
+//    from sourceSets.test.output
+//    configurations = [project.configurations.testImplementation]
+//}
 
 task copyLibs(type: Copy) {
     from(sourceSets.main.runtimeClasspath) {
