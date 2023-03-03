@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'java-test-fixtures'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java-test-fixtures'
 
 ext {
 
@@ -31,7 +31,7 @@ ext {
 configurations {
     // Configuration for shading that does not pollutes the runtime classpath.
     shaded {
-        transitive = false
+        transitive = true
     }
 }
 
@@ -42,7 +42,7 @@ dependencies {
     api "org.skife.config:config-magic:$configMagicVersion"
     api libraries.flinkRpcApi
     api libraries.flinkCore
-    shaded libraries.flinkRpcImpl
+    api libraries.flinkRpcImpl
 
     api "org.apache.mesos:mesos:$mesosVersion"
     api "org.json:json:$jsonVersion"
@@ -56,9 +56,11 @@ dependencies {
 }
 
 shadowJar {
+    include '*flink-rpc-akka*.jar'
     classifier = null
     configurations = [project.configurations.shaded]
     mergeServiceFiles()
+    from sourceSets.main.allSource
 }
 
 task copyLibs(type: Copy) {
