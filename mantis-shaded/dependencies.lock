@@ -73,6 +73,15 @@
         "org.apache.curator:curator-recipes": {
             "locked": "2.12.0"
         },
+        "org.apache.flink:flink-core": {
+            "locked": "1.14.2"
+        },
+        "org.apache.flink:flink-rpc-akka": {
+            "locked": "1.14.2"
+        },
+        "org.apache.flink:flink-rpc-core": {
+            "locked": "1.14.2"
+        },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.14"
         }
