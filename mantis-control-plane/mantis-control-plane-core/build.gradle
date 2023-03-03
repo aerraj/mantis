@@ -48,7 +48,7 @@ dependencies {
 }
 
 task copyLibs(type: Copy) {
-    from sourceSets.test.runtimeClasspath
+    from sourceSets.main.runtimeClasspath
     include '*flink-rpc-akka*.jar'
     into "$buildDir/classes"
 }
