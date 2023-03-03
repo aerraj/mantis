@@ -59,7 +59,7 @@ dependencies {
 
 shadowJar {
 //    include '*flink-rpc-akka*.jar'
-    classifier = null
+    classifier = ''
     configurations = [project.configurations.shaded]
 //    from sourceSets.main.allSource
 
