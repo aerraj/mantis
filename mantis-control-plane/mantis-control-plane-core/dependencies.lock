@@ -380,11 +380,6 @@
             "locked": "1.1.9.1"
         }
     },
-    "shadow": {
-        "org.apache.flink:flink-rpc-akka": {
-            "locked": "1.14.2"
-        }
-    },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
             "locked": "1.18.20"

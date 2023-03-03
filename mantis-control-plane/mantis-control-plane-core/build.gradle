@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java-test-fixtures'
 
 ext {
@@ -28,13 +28,13 @@ ext {
     testngVersion = '6.14.+'
 }
 
-configurations {
-    // Configuration for shading that does not pollutes the runtime classpath.
-    shaded {
-        transitive = false
-    }
-//    api.extendsFrom shadow
-}
+//configurations {
+//    // Configuration for shading that does not pollutes the runtime classpath.
+//    shaded {
+//        transitive = false
+//    }
+////    api.extendsFrom shadow
+//}
 
 dependencies {
 
@@ -44,7 +44,7 @@ dependencies {
     api 'com.google.code.findbugs:jsr305:3.0.1' // For Nonnull annotation
     api libraries.flinkRpcApi
     api libraries.flinkCore
-    shadow libraries.flinkRpcImpl
+    compileOnly libraries.flinkRpcImpl
 
     api "org.apache.mesos:mesos:$mesosVersion"
     api "org.json:json:$jsonVersion"
@@ -57,17 +57,17 @@ dependencies {
     testImplementation libraries.mockitoAll
 }
 
-shadowJar {
-//    include '*flink-rpc-akka*.jar'
-    classifier = ''
-    configurations = [project.configurations.shaded]
-//    from sourceSets.main.allSource
-
-    exclude 'META-INF/LICENSE'
-    exclude 'META-INF/licence/*'
-
-    mergeServiceFiles()
-}
+//shadowJar {
+////    include '*flink-rpc-akka*.jar'
+//    classifier = ''
+//    configurations = [project.configurations.shaded]
+////    from sourceSets.main.allSource
+//
+//    exclude 'META-INF/LICENSE'
+//    exclude 'META-INF/licence/*'
+//
+//    mergeServiceFiles()
+//}
 
 //shadowJar {
 ////    project.configurations.testImplementation.canBeResolved = true
@@ -76,14 +76,18 @@ shadowJar {
 //    configurations = [project.configurations.testImplementation]
 //}
 
+//def libdir = 'build/lib'
+//task deleteLibs(type: Delete) {
+//    delete libdir
+//}
 task copyLibs(type: Copy) {
-    from(sourceSets.main.runtimeClasspath) {
+    from(sourceSets.main.compileClasspath) {
         rename 'flink-rpc-akka(.*)', 'flink-rpc-akka.jar'
     }
     include '*flink-rpc-akka*.jar'
     into "$buildDir/classes/java/main"
 }
 
-jar.enabled = false
-copyLibs.dependsOn shadowJar
+//copyLibs.dependsOn shadowJar
+//copyLibs.dependsOn deleteLibs
 jar.dependsOn copyLibs
