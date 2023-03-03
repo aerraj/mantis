@@ -84,5 +84,6 @@ task copyLibs(type: Copy) {
     into "$buildDir/classes/java/main"
 }
 
+jar.enabled = false
 copyLibs.dependsOn shadowJar
 jar.dependsOn copyLibs
