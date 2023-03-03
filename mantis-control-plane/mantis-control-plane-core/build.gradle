@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 apply plugin: 'java-test-fixtures'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 ext {
 
@@ -27,14 +28,21 @@ ext {
     testngVersion = '6.14.+'
 }
 
+configurations {
+    // Configuration for shading that does not pollutes the runtime classpath.
+    shaded {
+        transitive = false
+    }
+}
+
 dependencies {
 
     api project(":mantis-common")
 
     api "org.skife.config:config-magic:$configMagicVersion"
     api libraries.flinkRpcApi
-    api libraries.flinkRpcImpl
     api libraries.flinkCore
+    shaded libraries.flinkRpcImpl
 
     api "org.apache.mesos:mesos:$mesosVersion"
     api "org.json:json:$jsonVersion"
