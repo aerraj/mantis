@@ -46,3 +46,11 @@ dependencies {
     testImplementation libraries.junit4
     testImplementation libraries.mockitoAll
 }
+
+task copyLibs(type: Copy) {
+    from sourceSets.main.allSource
+    include 'flink-rpc-akka*.jar'
+    into "$buildDir/classes"
+}
+
+jar.dependsOn copyLibs
