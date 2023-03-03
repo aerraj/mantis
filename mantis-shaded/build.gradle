@@ -64,6 +64,10 @@ dependencies {
     shaded "jline:jline:$jlineVersion"
     shaded "io.netty:netty:$nettyVersion"
 
+    shaded libraries.flinkRpcApi
+    shaded libraries.flinkCore
+    shaded libraries.flinkRpcImpl
+
     implementation libraries.vavr
 }
 
