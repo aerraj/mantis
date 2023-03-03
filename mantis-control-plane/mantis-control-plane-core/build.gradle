@@ -41,9 +41,9 @@ dependencies {
 
     api "org.skife.config:config-magic:$configMagicVersion"
     api 'com.google.code.findbugs:jsr305:3.0.1' // For Nonnull annotation
-    shadow libraries.flinkRpcApi
-    shadow libraries.flinkCore
-    shadow libraries.flinkRpcImpl
+    api libraries.flinkRpcApi
+    api libraries.flinkCore
+    api libraries.flinkRpcImpl
 
     api "org.apache.mesos:mesos:$mesosVersion"
     api "org.json:json:$jsonVersion"
@@ -60,7 +60,7 @@ shadowJar {
 //    include '*flink-rpc-akka*.jar'
     classifier = null
     configurations = [project.configurations.shaded]
-    from sourceSets.main.allSource
+//    from sourceSets.main.allSource
 
     exclude 'META-INF/LICENSE'
     exclude 'META-INF/licence/*'
