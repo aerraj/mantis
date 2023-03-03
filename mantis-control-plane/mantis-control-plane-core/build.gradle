@@ -55,6 +55,12 @@ dependencies {
     testImplementation libraries.mockitoAll
 }
 
+shadowJar {
+    classifier = null
+    configurations = [project.configurations.shaded]
+    mergeServiceFiles()
+}
+
 task copyLibs(type: Copy) {
     from(sourceSets.main.runtimeClasspath) {
         rename 'flink-rpc-akka(.*)', 'flink-rpc-akka.jar'
