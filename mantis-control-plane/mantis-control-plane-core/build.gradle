@@ -64,3 +64,4 @@ task copyLibs(type: Copy) {
 }
 
 jar.dependsOn copyLibs
+jar.dependsOn shadowJar
