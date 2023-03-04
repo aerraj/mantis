@@ -19,8 +19,11 @@ package io.mantisrx.server.core;
 import io.mantisrx.server.worker.TaskExecutorGateway;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +45,10 @@ import org.slf4j.LoggerFactory;
 public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
 
     private static final RpcSystem INSTANCE = createRpcSystem();
+
+    // Parameters for addResourcesToSystemClassLoader
+    private static final Class<?>[] parameters = new Class[]{URL.class};
+    private static Method sysClassLoaderMethod = null;
 
     public static RpcSystem getInstance() {
         return INSTANCE;
@@ -91,6 +98,9 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
                 new String[] {"org.apache.flink"});
 
             LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + componentClassLoader);
+            LOG.info("[fdc-91] System CL: " + ClassLoader.getSystemClassLoader());
+
+            addResourcesToSystemClassLoader(ExecuteStageRequest.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL());
 
             return new CleanupOnCloseRpcSystem(
                 ServiceLoader.load(RpcSystem.class, componentClassLoader).iterator().next(),
@@ -101,4 +111,23 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
         }
     }
 
+    public static synchronized void addResourcesToSystemClassLoader(URL url) {
+        URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        if (sysClassLoaderMethod == null) {
+            Class<?> sysClass = URLClassLoader.class;
+            Method method;
+            try {
+                method = sysClass.getDeclaredMethod("addURL", parameters);
+            } catch (SecurityException | NoSuchMethodException e) {
+                throw new RuntimeException("Failed to get handle on method addURL", e);
+            }
+            method.setAccessible(true);
+            sysClassLoaderMethod = method;
+        }
+        try {
+            sysClassLoaderMethod.invoke(sysLoader, new Object[]{url});
+        } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to invoke addURL for rsrc: " + url, e);
+        }
+    }
 }
