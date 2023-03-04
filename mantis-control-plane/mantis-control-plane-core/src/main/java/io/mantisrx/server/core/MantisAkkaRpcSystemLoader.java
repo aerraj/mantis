@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
 
     private static final RpcSystem INSTANCE = createRpcSystem();
-    private static final Logger LOG = LoggerFactory.getLogger(MantisAkkaRpcSystemLoader.class);
 
     public static RpcSystem getInstance() {
         return INSTANCE;
@@ -54,6 +53,7 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
 
     private static RpcSystem createRpcSystem() {
         try {
+            final Logger LOG = LoggerFactory.getLogger(MantisAkkaRpcSystemLoader.class);
             final ClassLoader flinkClassLoader = RpcSystem.class.getClassLoader();
             LOG.info("[fdc-91] flink cl - " + flinkClassLoader);
 
