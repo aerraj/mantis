@@ -112,12 +112,18 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
     }
 
     public static synchronized void addResourcesToSystemClassLoader(URL url) {
+        final Logger LOG = LoggerFactory.getLogger(MantisAkkaRpcSystemLoader.class);
+
         URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        for (URL u : sysLoader.getURLs()) {
+            LOG.info("[fdc-91] sysloader urls - : " + u);
+        }
         if (sysClassLoaderMethod == null) {
-            Class<?> sysClass = URLClassLoader.class;
+//            Class<?> sysClass = URLClassLoader.class;
+            Class sysClass = URLClassLoader.class;
             Method method;
             try {
-                method = sysClass.getDeclaredMethod("addURL", parameters);
+                method = sysClass.getDeclaredMethod("addURL", URL.class);
             } catch (SecurityException | NoSuchMethodException e) {
                 throw new RuntimeException("Failed to get handle on method addURL", e);
             }
