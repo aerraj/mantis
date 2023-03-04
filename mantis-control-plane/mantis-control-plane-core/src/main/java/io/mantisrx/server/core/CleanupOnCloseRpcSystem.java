@@ -42,6 +42,7 @@ class CleanupOnCloseRpcSystem implements RpcSystem {
         this.rpcSystem = Preconditions.checkNotNull(rpcSystem);
         this.pluginLoader = Preconditions.checkNotNull(pluginLoader);
         this.tempDirectory = tempDirectory;
+        LOG.info("[fdc-91] rpcSsystemn: " + rpcSystem);
     }
 
     @Override
