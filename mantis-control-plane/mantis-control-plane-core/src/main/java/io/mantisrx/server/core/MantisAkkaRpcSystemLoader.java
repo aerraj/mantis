@@ -16,8 +16,10 @@
 
 package io.mantisrx.server.core;
 
+import io.mantisrx.server.worker.TaskExecutorGateway;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -74,16 +76,17 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
 
             IOUtils.copyBytes(resourceStream, Files.newOutputStream(tempFile));
 
+            LOG.info("[fdc-91] flink cl - Tamaro: " + TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL());
             final SubmoduleClassLoader submoduleClassLoader =
                 new SubmoduleClassLoader(
-                    new URL[] {tempFile.toUri().toURL()}, flinkClassLoader);
+                    new URL[] {tempFile.toUri().toURL(), TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()}, flinkClassLoader);
             LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + submoduleClassLoader);
 
             return new CleanupOnCloseRpcSystem(
                 ServiceLoader.load(RpcSystem.class, submoduleClassLoader).iterator().next(),
                 submoduleClassLoader,
                 tempFile);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Could not initialize RPC system.", e);
         }
     }
