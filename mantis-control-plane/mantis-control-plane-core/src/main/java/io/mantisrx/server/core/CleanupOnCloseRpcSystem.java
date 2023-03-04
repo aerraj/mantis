@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import javax.annotation.Nullable;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.classloading.SubmoduleClassLoader;
+import org.apache.flink.core.classloading.ComponentClassLoader;
 import org.apache.flink.runtime.rpc.AddressResolution;
 import org.apache.flink.runtime.rpc.RpcSystem;
 import org.apache.flink.util.FileUtils;
@@ -34,11 +34,11 @@ class CleanupOnCloseRpcSystem implements RpcSystem {
     private static final Logger LOG = LoggerFactory.getLogger(CleanupOnCloseRpcSystem.class);
 
     private final RpcSystem rpcSystem;
-    private final SubmoduleClassLoader pluginLoader;
+    private final ComponentClassLoader pluginLoader;
     @Nullable private final Path tempDirectory;
 
     public CleanupOnCloseRpcSystem(
-            RpcSystem rpcSystem, SubmoduleClassLoader pluginLoader, @Nullable Path tempDirectory) {
+            RpcSystem rpcSystem, ComponentClassLoader pluginLoader, @Nullable Path tempDirectory) {
         this.rpcSystem = Preconditions.checkNotNull(rpcSystem);
         this.pluginLoader = Preconditions.checkNotNull(pluginLoader);
         this.tempDirectory = tempDirectory;

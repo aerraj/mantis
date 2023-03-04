@@ -27,7 +27,8 @@ import java.nio.file.Paths;
 import java.util.ServiceLoader;
 import java.util.UUID;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.classloading.SubmoduleClassLoader;
+import org.apache.flink.configuration.CoreOptions;
+import org.apache.flink.core.classloading.ComponentClassLoader;
 import org.apache.flink.runtime.rpc.RpcSystem;
 import org.apache.flink.runtime.rpc.RpcSystemLoader;
 import org.apache.flink.util.IOUtils;
@@ -77,14 +78,23 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
             IOUtils.copyBytes(resourceStream, Files.newOutputStream(tempFile));
 
             LOG.info("[fdc-91] flink cl - Tamaro: " + TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL());
-            final SubmoduleClassLoader submoduleClassLoader =
-                new SubmoduleClassLoader(
-                    new URL[] {tempFile.toUri().toURL(), TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()}, flinkClassLoader);
-            LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + submoduleClassLoader);
+            LOG.info("[fdc-91] flink cl - Biggy: " + tempFile.toUri().toURL());
+//            final SubmoduleClassLoader submoduleClassLoader =
+//                new SubmoduleClassLoader(
+//                    new URL[] {tempFile.toUri().toURL(), TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()}, flinkClassLoader);
+            final ComponentClassLoader componentClassLoader = new ComponentClassLoader(
+//                new URL[] {tempFile.toUri().toURL(), TaskExecutorGateway.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()},
+                new URL[] {tempFile.toUri().toURL()},
+                flinkClassLoader,
+                CoreOptions.parseParentFirstLoaderPatterns(
+                    "org.slf4j;org.apache.log4j;org.apache.logging;org.apache.commons.logging;ch.qos.logback;io.mantisrx.server.worker", ""),
+                new String[] {"org.apache.flink"});
+
+            LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + componentClassLoader);
 
             return new CleanupOnCloseRpcSystem(
-                ServiceLoader.load(RpcSystem.class, submoduleClassLoader).iterator().next(),
-                submoduleClassLoader,
+                ServiceLoader.load(RpcSystem.class, componentClassLoader).iterator().next(),
+                componentClassLoader,
                 tempFile);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Could not initialize RPC system.", e);
