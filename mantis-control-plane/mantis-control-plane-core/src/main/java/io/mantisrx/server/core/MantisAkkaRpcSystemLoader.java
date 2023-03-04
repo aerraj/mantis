@@ -87,7 +87,7 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
                 new URL[] {tempFile.toUri().toURL()},
                 flinkClassLoader,
                 CoreOptions.parseParentFirstLoaderPatterns(
-                    "org.slf4j;org.apache.log4j;org.apache.logging;org.apache.commons.logging;ch.qos.logback;io.mantisrx.server.worker", ""),
+                    "org.slf4j;org.apache.log4j;org.apache.logging;org.apache.commons.logging;ch.qos.logback;io.mantisrx.server.worker;io.mantisrx.server.core", ""),
                 new String[] {"org.apache.flink"});
 
             LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + componentClassLoader);
