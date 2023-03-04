@@ -16,6 +16,7 @@
 
 package io.mantisrx.server.core;
 
+import io.mantisrx.runtime.MantisJobDurationType;
 import io.mantisrx.server.worker.TaskExecutorGateway;
 import java.io.IOException;
 import java.io.InputStream;
@@ -94,13 +95,13 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
                 new URL[] {tempFile.toUri().toURL()},
                 flinkClassLoader,
                 CoreOptions.parseParentFirstLoaderPatterns(
-                    "org.slf4j;org.apache.log4j;org.apache.logging;org.apache.commons.logging;ch.qos.logback;io.mantisrx.server.worker;io.mantisrx.server.core", ""),
+                    "org.slf4j;org.apache.log4j;org.apache.logging;org.apache.commons.logging;ch.qos.logback;io.mantisrx.server.worker;io.mantisrx.server.core;io.mantisrx", ""),
                 new String[] {"org.apache.flink"});
 
             LOG.info("[fdc-91] flink cl - submoduleClassLoader: " + componentClassLoader);
             LOG.info("[fdc-91] System CL: " + ClassLoader.getSystemClassLoader());
 
-            addResourcesToSystemClassLoader(ExecuteStageRequest.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL());
+//            addResourcesToSystemClassLoader(ExecuteStageRequest.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL());
 
             return new CleanupOnCloseRpcSystem(
                 ServiceLoader.load(RpcSystem.class, componentClassLoader).iterator().next(),
@@ -115,6 +116,8 @@ public class MantisAkkaRpcSystemLoader implements RpcSystemLoader {
         final Logger LOG = LoggerFactory.getLogger(MantisAkkaRpcSystemLoader.class);
 
         URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        LOG.info("[fdc-91] MantisJobDurationType CL - : " + MantisJobDurationType.class.getClassLoader());
+        LOG.info("[fdc-91] Loading MantisJobDurationType from system CL - : " + ClassLoader.getSystemClassLoader().getResource(MantisJobDurationType.class.getName().replace('.','/') + ".class"));
         for (URL u : sysLoader.getURLs()) {
             LOG.info("[fdc-91] sysloader urls - : " + u);
         }
